@@ -8,8 +8,8 @@ namespace E_Commerce.Entities
         public string? Address { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public ApplicationUser? User { get; set; }
 
-        public Cart Cart { get; set; }
+        public Cart? Cart { get; set; }
     }
 }

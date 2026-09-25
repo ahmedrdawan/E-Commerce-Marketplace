@@ -7,7 +7,7 @@ namespace E_Commerce.Entities
         public Guid UserId { get; set; }
         public Guid RoleId { get; set; }
 
-        public ApplicationUser User { get; set; }
-        public Role Role { get; set; }
+        public ApplicationUser? User { get; set; }
+        public Role? Role { get; set; }
     }
 }

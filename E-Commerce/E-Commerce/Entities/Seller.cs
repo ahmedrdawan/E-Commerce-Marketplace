@@ -10,9 +10,9 @@ namespace E_Commerce.Entities
         public bool IsApproved { get; set; }
         public DateTime? ApprovedAt { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public ApplicationUser? User { get; set; }
 
-        public ICollection<Product> Products { get; set; }
-        public ICollection<OrderItem> OrderItems { get; set; }
+        public ICollection<Product>? Products { get; set; }
+        public ICollection<OrderItem>? OrderItems { get; set; }
     }
 }

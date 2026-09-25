@@ -12,8 +12,8 @@ namespace E_Commerce.Entities
         public decimal UnitPrice { get; set; }
         public decimal SubTotal { get; set; }
 
-        public Order Order { get; set; }
-        public Product Product { get; set; }
-        public Seller Seller { get; set; }
+        public Order? Order { get; set; }
+        public Product? Product { get; set; }
+        public Seller? Seller { get; set; }
     }
 }

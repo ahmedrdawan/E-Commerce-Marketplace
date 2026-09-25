@@ -1,0 +1,70 @@
+
+@model E_Commerce.Entities.Category
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container py-4">
+
+    <!-- Category Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-2">@Model.Name</h1>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <p class="text-muted mb-0">
+                    @Model.Description
+                </p>
+            }
+        </div>
+
+        <a asp-controller="Products"
+           asp-action="Create"
+           asp-route-categoryId="@Model.Id"
+           class="btn btn-primary">
+            Add Product
+        </a>
+    </div>
+
+    <hr />
+
+    <!-- Products -->
+    <div class="mt-4">
+        <h3 class="mb-3">Products</h3>
+
+        @if (Model.Products != null && Model.Products.Any())
+        {
+            <div class="row g-3">
+
+                @foreach (var product in Model.Products)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm">
+
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    @product.Name
+                                </h5>
+
+                                <p class="card-text fw-bold">
+                                    @product.Price.ToString("C")
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                No products in this category yet.
+            </div>
+        }
+    </div>
+
+</div>

@@ -11,6 +11,6 @@ namespace E_Commerce.Entities
         public DateTime? UpdatedAt { get; set; }
 
         public Customer? Customer { get; set; }
-        public ICollection<CartItem> Items { get; set; }
+        public ICollection<CartItem>? Items { get; set; }
     }
 }

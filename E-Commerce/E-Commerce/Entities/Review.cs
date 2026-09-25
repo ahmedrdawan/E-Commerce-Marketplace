@@ -11,7 +11,7 @@ namespace E_Commerce.Entities
         public string? Comment { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public Customer Customer { get; set; }
-        public Product Product { get; set; }
+        public Customer? Customer { get; set; }
+        public Product? Product { get; set; }
     }
 }

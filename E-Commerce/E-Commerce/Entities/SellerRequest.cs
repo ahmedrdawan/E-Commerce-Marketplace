@@ -13,7 +13,7 @@ namespace E_Commerce.Entities
         public DateTime RequestedAt { get; set; }
         public DateTime? ReviewedAt { get; set; }
 
-        public ApplicationUser User { get; set; }
-        public ApplicationUser ReviewedByAdmin { get; set; }
+        public ApplicationUser? User { get; set; }
+        public ApplicationUser? ReviewedByAdmin { get; set; }
     }
 }

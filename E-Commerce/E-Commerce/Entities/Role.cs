@@ -6,6 +6,6 @@ namespace E_Commerce.Entities
 {
     public class Role : IdentityRole<Guid>
     {
-        public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<UserRole>? UserRoles { get; set; }
     }
 }

@@ -10,6 +10,6 @@ namespace E_Commerce.Entities
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

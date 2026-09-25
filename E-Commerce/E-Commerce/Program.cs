@@ -1,6 +1,8 @@
 using E_Commerce.Data;
 using E_Commerce.Entities;
 using E_Commerce.SeedData;
+using E_Commerce.Data.Repositories;
+using E_Commerce.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +26,16 @@ namespace E_Commerce
                 .AddIdentity<ApplicationUser, Role>()
                 .AddEntityFrameworkStores<EcommerceDbContext>()
                 .AddDefaultTokenProviders();
+
+            // Register UnitOfWork, domain services and auth service
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 
             var app = builder.Build();
 

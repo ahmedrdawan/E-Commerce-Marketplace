@@ -1,0 +1,31 @@
+@model IEnumerable<E_Commerce.Entities.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<h1>Categories</h1>
+<ul class="list-unstyled">
+@foreach (var c in Model)
+{
+    <li class="card mb-3">
+        <div class="card-body">
+            <h4>@c.Name</h4>
+            <p>@c.Description</p>
+            <a asp-controller="Categories" asp-action="Details" asp-route-id="@c.Id" class="btn btn-sm btn-secondary">View</a>
+            <a asp-controller="Products" asp-action="Create" asp-route-categoryId="@c.Id" class="btn btn-sm btn-primary ml-2">Add product</a>
+
+            @if (c.Products != null && c.Products.Any())
+            {
+                <h5 class="mt-3">Products</h5>
+                <ul>
+                @foreach (var p in c.Products)
+                {
+                    <li>@p.Name - @p.Price.ToString("C")</li>
+                }
+                </ul>
+            }
+        </div>
+    </li>
+}
+</ul>

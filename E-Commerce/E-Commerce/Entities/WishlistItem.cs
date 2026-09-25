@@ -9,7 +9,7 @@ namespace E_Commerce.Entities
         public Guid ProductId { get; set; }
         public DateTime AddedAt { get; set; }
 
-        public Wishlist Wishlist { get; set; }
-        public Product Product { get; set; }
+        public Wishlist? Wishlist { get; set; }
+        public Product? Product { get; set; }
     }
 }
