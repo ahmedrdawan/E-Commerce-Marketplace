@@ -1,0 +1,187 @@
+﻿@model E_Commerce.Entities.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between
+                        align-items-center mb-4">
+
+                        <div>
+                            <h2>
+                                Order Details
+                            </h2>
+
+                            <p class="text-muted mb-0">
+                                Order ID: @Model.Id
+                            </p>
+                        </div>
+
+                        <span class="badge bg-primary fs-6">
+                            @Model.Status
+                        </span>
+
+                    </div>
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["Success"]
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Error"]
+                        </div>
+                    }
+
+                    <h5 class="mb-3">
+                        Products
+                    </h5>
+
+                    <div class="table-responsive">
+
+                        <table class="table">
+
+                            <thead class="table-light">
+
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @item.Product?.Name
+                                        </td>
+
+                                        <td>
+                                            @item.Quantity
+                                        </td>
+
+                                        <td>
+                                            @item.UnitPrice.ToString("C")
+                                        </td>
+
+                                        <td>
+                                            @item.SubTotal.ToString("C")
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="text-end mb-4">
+
+                        <h5>
+                            Total:
+                            @Model.TotalPrice.ToString("C")
+                        </h5>
+
+                    </div>
+
+                    @if (Model.Status != E_Commerce.Enums.OrderStatus.Delivered &&
+                         Model.Status != E_Commerce.Enums.OrderStatus.Cancelled)
+                    {
+                        <div class="border-top pt-4">
+
+                            <h5 class="mb-3">
+                                Update Order Status
+                            </h5>
+
+                            <form asp-action="UpdateStatus"
+                                  method="post">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@Model.Id" />
+
+                                <div class="row">
+
+                                    <div class="col-md-8">
+
+                                        <select name="status"
+                                                class="form-select">
+
+                                            <option value="Pending">
+                                                Pending
+                                            </option>
+
+                                            <option value="Processing">
+                                                Processing
+                                            </option>
+
+                                            <option value="Shipped">
+                                                Shipped
+                                            </option>
+
+                                            <option value="Delivered">
+                                                Delivered
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="col-md-4">
+
+                                        <button type="submit"
+                                                class="btn btn-primary w-100">
+                                            Update Status
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+                    }
+
+                    <div class="mt-4">
+
+                        <a asp-action="Index"
+                               class="btn btn-secondary">
+                            Back to Orders
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

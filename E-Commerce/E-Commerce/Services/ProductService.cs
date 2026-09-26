@@ -111,5 +111,104 @@ namespace E_Commerce.Services
 
             await _uow.SaveChangesAsync();
         }
+        // Additional methods for seller-specific operations with products
+        public async Task<IEnumerable<Product>> GetBySellerIdAsync(Guid sellerId)
+        {
+            return await _productRepository.GetBySellerIdAsync(sellerId);
+        }
+        public async Task CreateAsync(ProductViewModel product,Guid sellerId)
+        {
+            if (product.CategoryId == Guid.Empty)
+                throw new ArgumentException("Category is required.");
+
+            var existing = await _productRepository
+                .GetByNameAsync(product.Name);
+
+            if (existing != null)
+            {
+                throw new InvalidOperationException(
+                    $"A product with the name '{product.Name}' already exists.");
+            }
+
+            var newProduct = new Product
+            {
+                Id = Guid.NewGuid(),
+
+                SellerId = sellerId,
+
+                CategoryId = product.CategoryId,
+
+                Name = product.Name,
+
+                Description = product.Description,
+
+                Price = product.Price,
+
+                AvailableQuantity = product.AvailableQuantity,
+
+                ImageUrl = product.ImageUrl,
+
+                IsActive = product.IsActive,
+
+                CreatedAt = DateTime.UtcNow,
+
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _productRepository.AddAsync(newProduct);
+
+            await _uow.SaveChangesAsync();
+        }
+        public async Task UpdateAsync(Guid id, UpdateProductViewModel product,Guid sellerId)
+        {
+            var existing = await _productRepository.GetByIdAsync(id);
+
+            if (existing == null)
+                throw new KeyNotFoundException("Product not found.");
+
+            if (existing.SellerId != sellerId)
+                throw new UnauthorizedAccessException("You cannot edit this product.");
+
+            var duplicate =
+                await _productRepository.GetByNameAsync(product.Name);
+
+            if (duplicate != null && duplicate.Id != id)
+            {
+                throw new InvalidOperationException($"A product with the name '{product.Name}' already exists.");
+            }
+
+            existing.Name = product.Name;
+
+            existing.Description = product.Description;
+
+            existing.Price = product.Price;
+
+            existing.AvailableQuantity = product.AvailableQuantity;
+
+            existing.ImageUrl = product.ImageUrl;
+
+            existing.IsActive = product.IsActive;
+
+            existing.UpdatedAt = DateTime.UtcNow;
+
+            await _productRepository.UpdateAsync(existing);
+
+            await _uow.SaveChangesAsync();
+        }
+        public async Task DeleteAsync(Guid id,Guid sellerId)
+        {
+            var existing = await _productRepository.GetByIdAsync(id);
+
+            if (existing == null)
+                throw new KeyNotFoundException("Product not found.");
+
+            if (existing.SellerId != sellerId)
+                throw new UnauthorizedAccessException("You cannot delete this product.");
+
+            await _productRepository.DeleteAsync(existing);
+
+            await _uow.SaveChangesAsync();
+        }
+
     }
 }
