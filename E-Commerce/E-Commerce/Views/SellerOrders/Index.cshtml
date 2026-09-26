@@ -1,0 +1,118 @@
+﻿@model IEnumerable<E_Commerce.Entities.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="container mt-5">
+
+    <div class="card shadow-sm">
+
+        <div class="card-body p-4">
+
+            <h2 class="mb-1">
+                My Orders
+            </h2>
+
+            <p class="text-muted mb-4">
+                Orders containing your products.
+            </p>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+
+                    <h5>
+                        No Orders
+                    </h5>
+
+                    <p class="text-muted">
+                        You do not have any orders yet.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Created At</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @order.Id
+                                    </td>
+
+                                    <td>
+                                        @order.Customer?.User?.FullName
+                                    </td>
+
+                                    <td>
+                                        @order.CreatedAt.ToLocalTime()
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            @order.Status
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @order.TotalPrice.ToString("C")
+                                    </td>
+
+                                    <td>
+                                        <a asp-action="Details"
+                                               asp-route-id="@order.Id"
+                                               class="btn btn-sm btn-primary">
+                                            Details
+                                        </a>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>s

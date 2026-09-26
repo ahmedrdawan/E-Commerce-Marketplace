@@ -19,7 +19,8 @@ namespace E_Commerce
 
             builder.Services.AddDbContext<EcommerceDbContext>(options =>
                 options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")));
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
 
             builder.Services
@@ -36,9 +37,19 @@ namespace E_Commerce
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+            builder.Services.AddScoped<ISellerRequestService, SellerRequestService>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<ISellerOrderService, SellerOrderService>();
 
             var app = builder.Build();
 
+
+            // Apply pending EF Core migrations before seeding
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<EcommerceDbContext>();
+                db.Database.Migrate();
+            }
 
             #region Seed Data
             await app.Services.Initialize();

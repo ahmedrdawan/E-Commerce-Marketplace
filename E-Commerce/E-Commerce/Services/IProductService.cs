@@ -16,5 +16,10 @@ namespace E_Commerce.Services
         Task DeleteAsync(Guid id);
 
         Task<IEnumerable<Product>> GetAllAsync();
+        // Additional methods for seller-specific operations with products
+        Task<IEnumerable<Product>> GetBySellerIdAsync(Guid sellerId);
+        Task CreateAsync(ProductViewModel product, Guid sellerId);
+        Task UpdateAsync(Guid id, UpdateProductViewModel product,Guid sellerId);
+        Task DeleteAsync(Guid id, Guid sellerId);
     }
 }

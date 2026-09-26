@@ -15,5 +15,8 @@ namespace E_Commerce.Data.Repositories
         Task UpdateAsync(Product product);
         Task DeleteAsync(Product product);
         Task<IEnumerable<Product>> GetAllAsync();
+
+        // Additional method to get products by seller ID 
+        Task<IEnumerable<Product>> GetBySellerIdAsync(Guid sellerId);
     }
 }

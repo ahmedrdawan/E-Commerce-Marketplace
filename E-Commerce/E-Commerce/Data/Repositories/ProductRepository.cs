@@ -71,5 +71,15 @@ namespace E_Commerce.Data.Repositories
             return await _db.Products
                 .FirstOrDefaultAsync(p => p.Name == name);
         }
+
+        // Additional method to get products by seller ID 
+        public async Task<IEnumerable<Product>> GetBySellerIdAsync(Guid sellerId)
+        {
+            return await _db.Products
+                .Include(p => p.Category)
+                .Where(p => p.SellerId == sellerId)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
     }
 }
