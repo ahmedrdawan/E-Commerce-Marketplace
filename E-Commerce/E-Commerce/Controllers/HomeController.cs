@@ -1,34 +1,32 @@
-using System.Threading.Tasks;
+using E_Commerce.Models;
+using E_Commerce.Services.Interfaces;
+using E_Commerce.ViewModels.Product;
 using Microsoft.AspNetCore.Mvc;
-using E_Commerce.Data.Repositories;
-using E_Commerce.ViewModels;
-using System.Linq;
-using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace E_Commerce.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IProductService _productService;
 
-        public HomeController(ICategoryRepository categoryRepository)
+        public HomeController(IProductService productService)
         {
-            _categoryRepository = categoryRepository;
+            _productService = productService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var categories = await _categoryRepository.GetAllAsync();
-            // create HomeViewModel
-            var products = categories.SelectMany(c => c.Products ?? new List<E_Commerce.Entities.Product>());
+            var (items, _) = await _productService.SearchAsync(new ProductSearchFilterViewModel { Page = 1, PageSize = 8 });
+            return View(items);
+        }
 
-            var vm = new HomeViewModel
-            {
-                Categories = categories,
-                Products = products
-            };
+        public IActionResult Privacy() => View();
 
-            return View(vm);
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

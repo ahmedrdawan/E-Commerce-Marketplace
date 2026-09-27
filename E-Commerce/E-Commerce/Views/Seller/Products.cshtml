@@ -1,0 +1,62 @@
+﻿@model IReadOnlyList<Product>
+@{
+    ViewData["Title"] = "My Products";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>My Products</h2>
+    <a class="btn btn-success" asp-action="Create">+ Add Product</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">No products yet.</div>
+}
+else
+{
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Name</td>
+                    <td>@p.Category?.Name</td>
+                    <td>@p.Price.ToString("0.00")</td>
+                    <td style="width:160px">
+                        <form asp-action="UpdateQuantity" method="post" class="d-flex gap-1">
+                            <input type="hidden" name="id" value="@p.Id" />
+                            <input type="number" name="quantity" value="@p.AvailableQuantity" min="0" class="form-control form-control-sm" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
+                        </form>
+                    </td>
+                    <td>
+                        @if (p.IsRemovedByAdmin)
+                        {
+                            <span class="badge bg-danger">Removed by admin</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Available</span>
+                        }
+                    </td>
+                    <td class="d-flex gap-1">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@p.Id">Edit</a>
+                        <form asp-action="Delete" asp-route-id="@p.Id" method="post" onsubmit="return confirm('Confirm delete this product?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

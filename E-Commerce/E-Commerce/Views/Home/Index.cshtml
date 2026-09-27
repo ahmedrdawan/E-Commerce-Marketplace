@@ -1,53 +1,27 @@
-@model dynamic
-
+@model IReadOnlyList<ProductListItemViewModel>
 @{
-    ViewData["Title"] = "Home Page";
-
-    IEnumerable<E_Commerce.Entities.Category> categories = null;
-
-    // support being passed either HomeViewModel or IEnumerable<Category>
-    if (Model is IEnumerable<E_Commerce.Entities.Category>)
-    {
-        categories = (IEnumerable<E_Commerce.Entities.Category>)Model;
-    }
-    else if (Model != null)
-    {
-        // attempt to read Categories property (HomeViewModel)
-        var prop = Model.GetType().GetProperty("Categories");
-        if (prop != null)
-            categories = prop.GetValue(Model) as IEnumerable<E_Commerce.Entities.Category>;
-    }
-
-    categories = categories ?? new List<E_Commerce.Entities.Category>();
+    ViewData["Title"] = "Home";
 }
 
-<h1>Categories</h1>
-<p>
-    <a asp-controller="Categories" asp-action="Create" class="btn btn-success">Add Category</a>
-</p>
-<ul class="list-unstyled">
-@foreach (var c in categories)
-{
-    <li class="card mb-3">
-        <div class="card-body">
-            <h4>@c.Name</h4>
-            <p>@c.Description</p>
-            <a asp-controller="Products" asp-action="Create" asp-route-categoryId="@c.Id" class="btn btn-sm btn-primary">Add product in this category</a>
-            <a asp-controller="Categories" asp-action="Edit" asp-route-categoryId="@c.Id" class="btn btn-sm btn-primary">Edit category</a>
-            <a asp-controller="Categories" asp-action="Delete" asp-route-categoryId="@c.Id" class="btn btn-sm btn-primary">Delet category</a>
-            <a asp-controller="Categories" asp-action="Details" asp-route-id="@c.Id" class="btn btn-sm btn-secondary ml-2">View Catigeries</a>
+<div class="p-5 mb-4 bg-light rounded-3 text-center">
+    <h1 class="display-6">Welcome to the E-Commerce Marketplace</h1>
+    <p class="lead">Shop from dozens of sellers in one place.</p>
+    <a class="btn btn-primary btn-lg" asp-controller="Product" asp-action="Index">Browse Products</a>
+</div>
 
-            @if (c.Products != null && c.Products.Any())
-            {
-                <h5 class="mt-3">Products</h5>
-                <ul>
-                @foreach (var p in c.Products)
-                {
-                    <li>@p.Name - @p.Price.ToString("C")</li>
-                }
-                </ul>
-            }
+<h3 class="mb-3">Latest Products</h3>
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    @foreach (var p in Model)
+    {
+        <div class="col">
+            <div class="card h-100 product-card">
+                <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/no-image.svg" : p.ImageUrl)" class="card-img-top" alt="@p.Name" onerror="this.onerror=null;this.src='/images/no-image.svg'" />
+                <div class="card-body">
+                    <h6 class="card-title">@p.Name</h6>
+                    <p class="card-text text-primary fw-bold">@p.Price.ToString("0.00") EGP</p>
+                    <a class="btn btn-outline-primary btn-sm w-100" asp-controller="Product" asp-action="Details" asp-route-id="@p.Id">View Details</a>
+                </div>
+            </div>
         </div>
-    </li>
-}
-</ul>
+    }
+</div>
