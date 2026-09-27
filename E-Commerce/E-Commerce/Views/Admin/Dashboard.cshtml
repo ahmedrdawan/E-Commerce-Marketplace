@@ -1,0 +1,47 @@
+﻿@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div class="row g-3">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card text-center p-3">
+            <h6>Customers</h6>
+            <h3>@Model.TotalCustomers</h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card text-center p-3">
+            <h6>Sellers</h6>
+            <h3>@Model.TotalSellers</h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card text-center p-3">
+            <h6>Products</h6>
+            <h3>@Model.TotalProducts</h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card text-center p-3">
+            <h6>Orders</h6>
+            <h3>@Model.TotalOrders</h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card text-center p-3">
+            <h6>Pending Orders</h6>
+            <h3>@Model.PendingOrders</h3>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-2 flex-wrap">
+    <a class="btn btn-outline-primary" asp-action="Users">Manage Users</a>
+    <a class="btn btn-outline-primary" asp-action="SellerRequests">Seller Requests</a>
+    <a class="btn btn-outline-primary" asp-action="Categories">Categories</a>
+    <a class="btn btn-outline-primary" asp-action="Products">Products</a>
+    <a class="btn btn-outline-primary" asp-action="Orders">Orders</a>
+</div>

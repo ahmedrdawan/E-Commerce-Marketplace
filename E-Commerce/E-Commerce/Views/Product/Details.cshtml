@@ -1,0 +1,103 @@
+﻿@model Product
+@{
+    ViewData["Title"] = Model.Name;
+    var reviews = (IReadOnlyList<ReviewViewModel>)ViewBag.Reviews;
+    bool inWishlist = ViewBag.InWishlist ?? false;
+}
+
+<div class="row">
+    <div class="col-md-5">
+        <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/no-image.svg" : Model.ImageUrl)" class="img-fluid rounded" alt="@Model.Name" />
+    </div>
+    <div class="col-md-7">
+        <h2>@Model.Name</h2>
+        <p class="text-muted">Category: @Model.Category?.Name | Seller: @Model.Seller?.FullName</p>
+        <p class="rating-stars">@(Model.Reviews.Count > 0 ? $"⭐ {Model.AverageRating:0.0} ({Model.Reviews.Count} reviews)" : "No reviews yet")</p>
+        <h3 class="text-primary">@Model.Price.ToString("0.00") EGP</h3>
+        <p>@Model.Description</p>
+        <p>
+            @if (Model.AvailableQuantity > 0)
+            {
+                <span class="badge bg-success">In stock (@Model.AvailableQuantity available)</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Currently unavailable</span>
+            }
+        </p>
+
+        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+        {
+            <div class="d-flex gap-2 mt-3">
+                <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex gap-2">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <input type="number" name="quantity" value="1" min="1" max="@Model.AvailableQuantity" class="form-control" style="width:90px" />
+                    <button type="submit" class="btn btn-primary" @(Model.AvailableQuantity == 0 ? "disabled" : "")>Add to Cart</button>
+                </form>
+
+                @if (inWishlist)
+                {
+                    <form asp-controller="Wishlist" asp-action="Remove" method="post">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-danger">Remove from Wishlist ❤</button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-controller="Wishlist" asp-action="Add" method="post">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-secondary">Add to Wishlist ♡</button>
+                    </form>
+                }
+            </div>
+        }
+        else if (User.Identity?.IsAuthenticated != true)
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary mt-3">Sign in to purchase</a>
+        }
+    </div>
+</div>
+
+<hr class="my-4" />
+
+<h4>Reviews</h4>
+@if (reviews.Count == 0)
+{
+    <p class="text-muted">No reviews yet.</p>
+}
+else
+{
+    foreach (var r in reviews)
+    {
+        <div class="border rounded p-2 mb-2">
+            <strong>@r.CustomerName</strong> - <span class="rating-stars">@(new string('⭐', r.Rating))</span>
+            <p class="mb-0">@r.Comment</p>
+            <small class="text-muted">@r.CreatedAt.ToString("yyyy-MM-dd")</small>
+        </div>
+    }
+}
+
+@if (User.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+{
+    <h5 class="mt-4">Add Your Review</h5>
+    <form asp-controller="Product" asp-action="AddReview" method="post" class="row g-2">
+        <input type="hidden" name="ProductId" value="@Model.Id" />
+        <div class="col-md-3">
+            <select name="Rating" class="form-select" required>
+                <option value="">Rating</option>
+                <option value="5">5 - Excellent</option>
+                <option value="4">4 - Very Good</option>
+                <option value="3">3 - Good</option>
+                <option value="2">2 - Fair</option>
+                <option value="1">1 - Poor</option>
+            </select>
+        </div>
+        <div class="col-md-7">
+            <input type="text" name="Comment" class="form-control" placeholder="Write your comment (optional)" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Send</button>
+        </div>
+    </form>
+    <small class="text-muted">Note: you can only review a product that has been delivered to you.</small>
+}

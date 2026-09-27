@@ -1,0 +1,53 @@
+﻿@model CreateProductViewModel
+@{
+    ViewData["Title"] = "Add Product";
+    var categories = (IReadOnlyList<Category>)ViewBag.Categories;
+}
+
+<h2 class="mb-4">Add New Product</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="col-md-6">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="CategoryId" class="form-label">Category</label>
+        <select asp-for="CategoryId" class="form-select">
+            <option value="">Select a category</option>
+            @foreach (var c in categories)
+            {
+                <option value="@c.Id">@c.Name</option>
+            }
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" type="number" step="0.01" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="AvailableQuantity" class="form-label"></label>
+        <input asp-for="AvailableQuantity" class="form-control" type="number" />
+        <span asp-validation-for="AvailableQuantity" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="ImageFile" class="form-label">Product Image</label>
+        <input asp-for="ImageFile" class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp" />
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Save Product</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

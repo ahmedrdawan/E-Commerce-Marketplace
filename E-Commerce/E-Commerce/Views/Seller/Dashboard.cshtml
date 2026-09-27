@@ -1,0 +1,33 @@
+﻿@model SellerDashboardViewModel
+@{
+    ViewData["Title"] = "Seller Dashboard";
+}
+
+<h2 class="mb-4">Seller Dashboard</h2>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h6>My Products</h6>
+            <h2>@Model.TotalProducts</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h6>Total Orders</h6>
+            <h2>@Model.TotalOrders</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h6>Total sales (delivered)</h6>
+            <h2>@Model.TotalSales.ToString("0.00")</h2>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+    <a class="btn btn-primary" asp-action="Products">Manage My Products</a>
+    <a class="btn btn-outline-primary" asp-action="Orders">My Product Orders</a>
+    <a class="btn btn-outline-success" asp-action="Create">Add New Product</a>
+</div>

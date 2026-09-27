@@ -1,0 +1,34 @@
+﻿@model IReadOnlyList<Category>
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Categories</h2>
+    <a class="btn btn-success" asp-action="CreateCategory">+ Add Category</a>
+</div>
+
+<table class="table align-middle">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Name</td>
+                <td>@c.Description</td>
+                <td class="d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-primary" asp-action="EditCategory" asp-route-id="@c.Id">Edit</a>
+                    <form asp-action="DeleteCategory" asp-route-id="@c.Id" method="post" onsubmit="return confirm('Confirm delete this category?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
