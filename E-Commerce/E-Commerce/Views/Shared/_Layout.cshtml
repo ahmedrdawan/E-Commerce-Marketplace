@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 <!DOCTYPE html>
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/E_Commerce.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/chatbot.css" asp-append-version="true" />
 </head>
 <body>
     <header>
@@ -131,6 +132,30 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/chatbot.js" asp-append-version="true"></script>
+
+    @Html.AntiForgeryToken()
+
+    <!-- Chatbot Widget -->
+    <div class="chatbot-widget">
+        <button id="chatbotToggleBtn" class="chatbot-toggle-btn" aria-label="Toggle Chat">💬</button>
+        <div id="chatbotPanel" class="chatbot-panel">
+            <div class="chatbot-header">
+                <span>AI Shopping Assistant</span>
+                <button id="chatbotCloseBtn" class="chatbot-close-btn" aria-label="Close Chat">&times;</button>
+            </div>
+            <div id="chatbotMessages" class="chatbot-messages">
+                <div id="chatbotTypingIndicator" class="chatbot-typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+            <div class="chatbot-input-area">
+                <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Type your message..." autocomplete="off" />
+                <button id="chatbotSendBtn" class="chatbot-send-btn" aria-label="Send">➤</button>
+            </div>
+        </div>
+    </div>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

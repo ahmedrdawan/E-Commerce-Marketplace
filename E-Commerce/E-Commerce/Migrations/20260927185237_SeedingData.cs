@@ -10,6 +10,7 @@ namespace E_Commerce.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+           
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[]
