@@ -61,6 +61,9 @@ namespace E_Commerce
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
+            builder.Services.AddHttpClient<IChatbotService, ChatbotService>(c => c.Timeout = TimeSpan.FromSeconds(60));
+            builder.Services.AddAntiforgery(options => options.HeaderName = "RequestVerificationToken");
+
             // Rate limiting - protects login endpoint from abuse
             builder.Services.AddRateLimiter(options =>
             {
