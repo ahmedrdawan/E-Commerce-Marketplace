@@ -1,0 +1,50 @@
+﻿
+@model IReadOnlyList<AdminUserRowViewModel>
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h2 class="mb-4">Manage Users</h2>
+
+<table class="table align-middle">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Seller Status</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.FullName</td>
+                <td>@u.Email</td>
+                <td>@string.Join(", ", u.Roles)</td>
+                <td>@u.SellerStatus</td>
+                <td>
+                    @if (u.IsActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Suspended</span>
+                    }
+                </td>
+                <td>
+                    <form asp-action="ToggleUserActive" method="post">
+                        <input type="hidden" name="userId" value="@u.Id" />
+                        <input type="hidden" name="activate" value="@(!u.IsActive)" />
+                        <button type="submit" class="btn btn-sm @(u.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                            @(u.IsActive ? "Suspend" : "Activate")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

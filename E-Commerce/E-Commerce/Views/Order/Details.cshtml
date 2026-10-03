@@ -1,0 +1,46 @@
+﻿
+@model OrderViewModel
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+}
+
+<h2 class="mb-4">Order Details #@Model.Id</h2>
+
+<p>Date: @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+<p>Shipping Address: @Model.ShippingAddress</p>
+<p>Overall Status: <span class="badge bg-secondary">@Model.Status</span></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Seller</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Item Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.SellerName</td>
+                <td>@item.Quantity</td>
+                <td>@item.UnitPrice.ToString("0.00")</td>
+                <td>@item.LineTotal.ToString("0.00")</td>
+                <td><span class="badge bg-info text-dark">@item.Status</span></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h5>Grand Total: @Model.TotalPrice.ToString("0.00") EGP</h5>
+
+@if (Model.Status != OrderStatus.Shipped && Model.Status != OrderStatus.Delivered && Model.Status != OrderStatus.Cancelled)
+{
+    <form asp-action="Cancel" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Are you sure you want to cancel the order?');">
+        <button type="submit" class="btn btn-outline-danger">Cancel Order</button>
+    </form>
+}

@@ -1,4 +1,4 @@
-﻿namespace E_Commerce.Services.Interfaces
+namespace E_Commerce.Services.Interfaces
 {
     public interface IChatbotService
     {

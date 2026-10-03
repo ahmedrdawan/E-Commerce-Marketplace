@@ -1,0 +1,72 @@
+﻿@model ViewCartViewModel
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<div class="shop-header">
+    <h1>Shopping Cart</h1>
+    <p>Review your items before checkout.</p>
+</div>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="empty-state">
+        <h3>Your cart is empty</h3>
+        <p>Find something you like and add it to your cart.</p>
+        <a class="btn btn-primary" asp-controller="Product" asp-action="Index">Browse Products</a>
+    </div>
+}
+else
+{
+    <div class="card cart-card">
+        <div class="table-responsive">
+            <table class="table cart-table align-middle">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <div class="cart-product">
+                                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.svg" : item.ImageUrl)" alt="@item.ProductName" />
+                                    <span>@item.ProductName</span>
+                                </div>
+                            </td>
+                            <td>@item.UnitPrice.ToString("0.00") EGP</td>
+                            <td style="min-width:190px">
+                                <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="d-flex gap-1">
+                                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                                    <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.AvailableQuantity" class="form-control form-control-sm" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
+                                </form>
+                            </td>
+                            <td class="fw-bold">@item.LineTotal.ToString("0.00") EGP</td>
+                            <td>
+                                <form asp-controller="Cart" asp-action="Remove" method="post">
+                                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="cart-summary mt-4">
+        <div>
+            <div class="text-muted small">Order total</div>
+            <div class="cart-total">@Model.Total.ToString("0.00") EGP</div>
+        </div>
+        <a class="btn btn-primary btn-lg" asp-controller="Order" asp-action="Checkout">Proceed to Checkout</a>
+    </div>
+}

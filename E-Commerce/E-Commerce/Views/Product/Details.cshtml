@@ -1,0 +1,131 @@
+﻿
+@model Product
+@{
+    ViewData["Title"] = Model.Name;
+    var reviews = (IReadOnlyList<ReviewViewModel>)ViewBag.Reviews;
+    bool inWishlist = ViewBag.InWishlist ?? false;
+}
+
+<div class="mb-4">
+    <a asp-controller="Product" asp-action="Index" class="text-muted">Shop</a>
+    <span class="text-muted"> / @Model.Name</span>
+</div>
+
+<div class="card product-detail-card">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-6">
+            <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/no-image.svg" : Model.ImageUrl)"
+                 class="product-detail-image"
+                 alt="@Model.Name"
+                 onerror="this.onerror=null;this.src='/images/no-image.svg'" />
+        </div>
+
+        <div class="col-lg-6">
+            <div class="product-meta mb-2">@Model.Category?.Name</div>
+            <h1 class="product-detail-title">@Model.Name</h1>
+            <p class="product-meta mb-2">Sold by @Model.Seller?.FullName</p>
+            <p class="rating-stars">
+                @(Model.Reviews.Count > 0 ? $"★ {Model.AverageRating:0.0} ({Model.Reviews.Count} reviews)" : "No reviews yet")
+            </p>
+            <div class="product-detail-price mb-3">@Model.Price.ToString("0.00") EGP</div>
+            <p class="text-secondary">@Model.Description</p>
+
+            <div class="mb-4">
+                @if (Model.AvailableQuantity > 0)
+                {
+                    <span class="stock-badge stock-in">In stock · @Model.AvailableQuantity available</span>
+                }
+                else
+                {
+                    <span class="stock-badge stock-out">Currently unavailable</span>
+                }
+            </div>
+
+            @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+            {
+                <div class="d-flex flex-wrap gap-2">
+                    <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex gap-2">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <input type="number" name="quantity" value="1" min="1" max="@Model.AvailableQuantity" class="form-control" style="width:95px" />
+                        <button type="submit" class="btn btn-primary" @(Model.AvailableQuantity == 0 ? "disabled" : "")>Add to Cart</button>
+                    </form>
+
+                    @if (inWishlist)
+                    {
+                        <form asp-controller="Wishlist" asp-action="Remove" method="post">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-outline-danger">Remove from Wishlist</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="Wishlist" asp-action="Add" method="post">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-outline-secondary">Add to Wishlist</button>
+                        </form>
+                    }
+                </div>
+            }
+            else if (User.Identity?.IsAuthenticated != true)
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Sign in to purchase</a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="section-heading">
+    <div>
+        <h2 class="mb-0">Customer Reviews</h2>
+        <p>See what customers said about this product.</p>
+    </div>
+</div>
+
+@if (reviews.Count == 0)
+{
+    <div class="empty-state">
+        <h5>No reviews yet</h5>
+        <p class="mb-0">Be the first customer to share your experience.</p>
+    </div>
+}
+else
+{
+    foreach (var r in reviews)
+    {
+        <div class="review-card">
+            <div class="d-flex justify-content-between align-items-center gap-3">
+                <strong>@r.CustomerName</strong>
+                <span class="rating-stars">@(new string('★', r.Rating))</span>
+            </div>
+            <p class="mb-1 mt-2">@r.Comment</p>
+            <small class="text-muted">@r.CreatedAt.ToString("yyyy-MM-dd")</small>
+        </div>
+    }
+}
+
+@if (User.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+{
+    <div class="card p-4 mt-4">
+        <h4>Add Your Review</h4>
+        <p class="text-muted">Share your experience after the product is delivered.</p>
+        <form asp-controller="Product" asp-action="AddReview" method="post" class="row g-2">
+            <input type="hidden" name="ProductId" value="@Model.Id" />
+            <div class="col-md-3">
+                <select name="Rating" class="form-select" required>
+                    <option value="">Rating</option>
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Very Good</option>
+                    <option value="3">3 - Good</option>
+                    <option value="2">2 - Fair</option>
+                    <option value="1">1 - Poor</option>
+                </select>
+            </div>
+            <div class="col-md-7">
+                <input type="text" name="Comment" class="form-control" placeholder="Write your comment (optional)" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Send Review</button>
+            </div>
+        </form>
+    </div>
+}

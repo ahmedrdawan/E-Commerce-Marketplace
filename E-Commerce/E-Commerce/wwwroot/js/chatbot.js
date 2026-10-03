@@ -1,4 +1,4 @@
-﻿// chatbot.js
+// chatbot.js
 document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('chatbotToggleBtn');
     const panel = document.getElementById('chatbotPanel');

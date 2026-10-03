@@ -3,47 +3,60 @@ using E_Commerce.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace E_Commerce.Models.Data
-{
+namespace E_Commerce.Models.Data 
+{ 
     public static class DbSeeder
-    {
+    { 
         public static readonly string[] Roles = { "Admin", "Seller", "Customer" };
-
-        public static async Task SeedAsync(IServiceProvider services)
-        {
+        public static async Task SeedAsync(IServiceProvider services) 
+        { 
             var context = services.GetRequiredService<ApplicationDbContext>();
             await context.Database.MigrateAsync();
-
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             foreach (var role in Roles)
-            {
-                if (!await roleManager.RoleExistsAsync(role))
-                    await roleManager.CreateAsync(new IdentityRole(role));
+            { 
+                if (!await roleManager.RoleExistsAsync(role)) 
+                {
+                    var roleResult = await roleManager.CreateAsync(new IdentityRole(role));
+                    if (!roleResult.Succeeded)
+                    {
+                        throw new Exception($"Failed to create role '{role}': " + string.Join(", ", roleResult.Errors.Select(e => e.Description))); }
+                }
             }
-
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-            var config = services.GetRequiredService<IConfiguration>();
-
+            var config = services.GetRequiredService<IConfiguration>(); 
             var adminEmail = config["SeedAdmin:Email"] ?? "admin@example.com";
             var adminPassword = config["SeedAdmin:Password"] ?? "Admin@123";
-
-            if (await userManager.FindByEmailAsync(adminEmail) is null)
+            var admin = await userManager.FindByEmailAsync(adminEmail);
+            if (admin is null)
             {
-                var admin = new ApplicationUser
+                admin = new ApplicationUser { UserName = adminEmail, Email = adminEmail, FullName = "System Administrator", EmailConfirmed = true, IsActive = true, SellerStatus = SellerRequestStatus.NotRequested };
+                var result = await userManager.CreateAsync(admin, adminPassword); 
+                if (!result.Succeeded) 
+                { 
+                    throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+                } 
+                var roleResult = await userManager.AddToRoleAsync(admin, "Admin");
+                if (!roleResult.Succeeded)
+                { 
+                    throw new Exception(string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                } 
+            } 
+            else
+            {
+                if (!await userManager.IsInRoleAsync(admin, "Admin"))
                 {
-                    UserName = adminEmail,
-                    Email = adminEmail,
-                    FullName = "System Administrator",
-                    EmailConfirmed = true,
-                    IsActive = true,
-                    SellerStatus = SellerRequestStatus.NotRequested
-                };
-
-                var result = await userManager.CreateAsync(admin, adminPassword);
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(admin, "Admin");
+                    var roleResult = await userManager.AddToRoleAsync(admin, "Admin");
+                    if (!roleResult.Succeeded)
+                    {
+                        throw new Exception(string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                    }
+                }
+            } 
+            if (!await context.Categories.AnyAsync())
+            { 
+                context.Categories.AddRange(new Category { Name = "Electronics", Description = "Phones, laptops and gadgets" }, new Category { Name = "Clothing", Description = "Men, women and kids fashion" }, new Category { Name = "Home & Kitchen", Description = "Appliances and home goods" }, new Category { Name = "Books", Description = "Books of all genres" }, new Category { Name = "Sports", Description = "Sports and outdoor equipment" }); await context.SaveChangesAsync();
             }
-
         }
-    }
+    } 
 }

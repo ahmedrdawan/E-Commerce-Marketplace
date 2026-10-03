@@ -2,8 +2,9 @@
 {
     public enum SellerRequestStatus
     {
-        Pending,
-        Approved,
-        Rejected
+        NotRequested = 0,
+        Pending = 1,
+        Approved = 2,
+        Rejected = 3
     }
 }

@@ -1,0 +1,52 @@
+﻿@model ApplicationUser
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h2>Welcome, @Model.FullName</h2>
+
+<dl class="row mt-4">
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+
+    <dt class="col-sm-3">Address</dt>
+    <dd class="col-sm-9">@(Model.Address ?? "-")</dd>
+</dl>
+
+@if (!User.IsInRole("Admin"))
+{
+    <dl class="row">
+        <dt class="col-sm-3">Seller request status</dt>
+        <dd class="col-sm-9">
+            <span class="badge bg-secondary">@Model.SellerStatus</span>
+        </dd>
+    </dl>
+
+    @if (Model.SellerStatus == SellerRequestStatus.NotRequested ||
+         Model.SellerStatus == SellerRequestStatus.Rejected)
+    {
+        <form asp-controller="Account"
+              asp-action="RequestSeller"
+              method="post">
+
+            <button type="submit" class="btn btn-outline-primary">
+                Request to become a seller
+            </button>
+        </form>
+    }
+    else if (Model.SellerStatus == SellerRequestStatus.Pending)
+    {
+        <div class="alert alert-info">
+            Your request to become a seller is under admin review.
+        </div>
+    }
+    else if (Model.SellerStatus == SellerRequestStatus.Approved)
+    {
+        <div class="alert alert-success">
+            You are an approved seller.
+            <a asp-controller="Seller" asp-action="Dashboard">
+                Go to seller dashboard
+            </a>
+        </div>
+    }
+}

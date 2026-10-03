@@ -1,11 +1,13 @@
-using E_Commerce.Data;
-using E_Commerce.Data.Repositories;
-using E_Commerce.Entities;
+
 using E_Commerce.Models.Data;
-using E_Commerce.Services;
+using E_Commerce.Models.Entities;
+using E_Commerce.Repositories.Implementations;
+using E_Commerce.Repositories.Interfaces;
 using E_Commerce.Services.Implementations;
 using E_Commerce.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce
@@ -16,17 +18,10 @@ namespace E_Commerce
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // DbContext registration
-            builder.Services.AddDbContext<EcommerceDbContext>(options =>
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection"),
-                    sqlOptions => sqlOptions.EnableRetryOnFailure()));
-
-            // Identity configuration (using custom Role entity)
-            builder.Services.AddIdentity<ApplicationUser, Role>(options =>
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 6;
                 options.Password.RequireDigit = true;
@@ -40,7 +35,7 @@ namespace E_Commerce
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedAccount = false;
             })
-            .AddEntityFrameworkStores<EcommerceDbContext>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(options =>
@@ -83,19 +78,20 @@ namespace E_Commerce
                 });
             });
 
+            // Add services to the container.
+            builder.Services.AddControllersWithViews(options =>
+            {
+                // CSRF protection is enforced globally for all POST/PUT/DELETE actions.
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            });
+
             var app = builder.Build();
 
-            // Apply pending EF Core migrations before seeding
+            // Seed roles / admin / categories on startup
             using (var scope = app.Services.CreateScope())
             {
-                var db = scope.ServiceProvider.GetRequiredService<EcommerceDbContext>();
-                db.Database.Migrate();
+                await DbSeeder.SeedAsync(scope.ServiceProvider);
             }
-
-            #region Seed Data
-            await app.Services.Initialize();
-            #endregion
-
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -106,7 +102,10 @@ namespace E_Commerce
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseRateLimiter();
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -121,3 +120,4 @@ namespace E_Commerce
         }
     }
 }
+

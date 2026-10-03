@@ -1,4 +1,4 @@
-﻿using E_Commerce.Models.Data;
+using E_Commerce.Models.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Text.Json;
@@ -76,7 +76,7 @@ namespace E_Commerce.Services.Implementations
                             o.Status
                         })
                         .ToListAsync();
-
+                    
                     var ordersJson = JsonSerializer.Serialize(userOrders);
                     ordersText = $"\n\nHere are the authenticated user's 5 most recent orders: {ordersJson}";
                 }
@@ -109,8 +109,8 @@ Here is the store catalog (up to 50 relevant items in stock): {catalogJson}{orde
 
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var jsonDoc = JsonDocument.Parse(responseJson);
-
-                if (jsonDoc.RootElement.TryGetProperty("message", out var messageElement) &&
+                
+                if (jsonDoc.RootElement.TryGetProperty("message", out var messageElement) && 
                     messageElement.TryGetProperty("content", out var replyElement))
                 {
                     return replyElement.GetString() ?? "Sorry, I couldn't understand the response from the server.";

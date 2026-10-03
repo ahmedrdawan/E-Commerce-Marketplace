@@ -1,37 +1,54 @@
-@model E_Commerce.ViewModels.RegisterViewModel
-
+﻿@model RegisterViewModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Sign Up";
 }
 
-<h2>Register</h2>
+<div class="auth-page">
+    <div class="card auth-card">
+        <div class="auth-heading">
+            <h1>Create your account</h1>
+            <p>Join the marketplace and start shopping.</p>
+        </div>
 
-<form asp-action="Register" method="post">
-    <div asp-validation-summary="All" class="text-danger"></div>
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="form-group">
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label"></label>
+                <input asp-for="FullName" class="form-control" placeholder="Your full name" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control" placeholder="Your address" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" placeholder="Create a password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat your password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 btn-lg">Create Account</button>
+        </form>
+
+        <p class="text-center text-muted mt-4 mb-0">Already have an account? <a asp-action="Login">Sign In</a></p>
     </div>
+</div>
 
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" class="form-control" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

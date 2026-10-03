@@ -1,0 +1,49 @@
+﻿
+@model IReadOnlyList<Product>
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h2 class="mb-4">All Products</h2>
+
+<table class="table align-middle">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Seller</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Name</td>
+                <td>@p.Seller?.FullName</td>
+                <td>@p.Category?.Name</td>
+                <td>@p.Price.ToString("0.00")</td>
+                <td>
+                    @if (p.IsRemovedByAdmin)
+                    {
+                        <span class="badge bg-danger">Removed</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Available</span>
+                    }
+                </td>
+                <td>
+                    @if (!p.IsRemovedByAdmin)
+                    {
+                        <form asp-action="RemoveProduct" asp-route-id="@p.Id" method="post" onsubmit="return confirm('Remove this product from the store?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove (inappropriate product)</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

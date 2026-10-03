@@ -1,4 +1,4 @@
-﻿namespace E_Commerce.ViewModels.Chat
+namespace E_Commerce.ViewModels.Chat
 {
     public class ChatRequestViewModel
     {
